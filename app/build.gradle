@@ -1,0 +1,47 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 27
+    defaultConfig {
+        applicationId "com.fan.jenkinstest"
+        minSdkVersion 19
+        targetSdkVersion 27
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    //签名的配置
+    signingConfigs{
+        release{
+            storeFile file("winds.jks")//文件的相对路径
+            storePassword '039468'
+            keyAlias 'winds'
+            keyPassword '039468'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release//打包命令行：gradlew assembleRelease
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        //自定义输出APK的文件名
+        android.applicationVariants.all { variant ->
+            variant.outputs.all {
+                def releaseTime = new Date().format("yyyy-MM-dd_HH/mm", TimeZone.getDefault())
+                outputFileName = "JenkinsTest_${defaultConfig.versionName}_${defaultConfig.versionCode}_${releaseTime}.apk"
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
